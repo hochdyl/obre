@@ -47,8 +47,12 @@ jobs:
 
                       echo "Triggering CI workflow for PR #$pr_number (branch: $head_ref)"
 
-                      # Trigger the pull-request workflow for this branch
-                      if gh workflow run pull-request.yml --repo ${{ github.repository }} --ref "$head_ref"; then
+                      # Trigger the pull-request workflow using API to force workflow_dispatch event
+                      if gh api \
+                          --method POST \
+                          -H "Accept: application/vnd.github+json" \
+                          "/repos/${{ github.repository }}/actions/workflows/pull-request.yml/dispatches" \
+                          -f "ref=$head_ref"; then
                           echo "✓ Successfully triggered workflow for PR #$pr_number"
                       else
                           echo "✗ Failed to trigger workflow for PR #$pr_number"
