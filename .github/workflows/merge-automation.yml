@@ -36,14 +36,27 @@ jobs:
                   # Get all open PRs targeting develop with their head branch
                   prs=$(gh pr list --repo ${{ github.repository }} --base develop --state open --json number,headRefName)
 
-                  echo "$prs" | jq -c '.[]' | while read -r pr; do
+                  # Count and display PRs
+                  pr_count=$(echo "$prs" | jq '. | length')
+                  echo "Found $pr_count open PR(s) targeting develop"
+
+                  # Process each PR
+                  echo "$prs" | jq -r '.[] | @json' | while IFS= read -r pr; do
                       pr_number=$(echo "$pr" | jq -r '.number')
                       head_ref=$(echo "$pr" | jq -r '.headRefName')
 
                       echo "Triggering CI workflow for PR #$pr_number (branch: $head_ref)"
 
-                      # Trigger the pull-request workflow for this branch
-                      gh workflow run pull-request.yml \
-                          --repo ${{ github.repository }} \
-                          --ref "$head_ref" || echo "Failed to trigger workflow for PR #$pr_number"
+                      # Trigger the pull-request workflow using API to force workflow_dispatch event
+                      if gh api \
+                          --method POST \
+                          -H "Accept: application/vnd.github+json" \
+                          "/repos/${{ github.repository }}/actions/workflows/pull-request.yml/dispatches" \
+                          -f "ref=$head_ref"; then
+                          echo "✓ Successfully triggered workflow for PR #$pr_number"
+                      else
+                          echo "✗ Failed to trigger workflow for PR #$pr_number"
+                      fi
                   done
+
+                  echo "Finished triggering workflows for all open PRs"
