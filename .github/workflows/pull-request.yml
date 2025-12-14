@@ -5,10 +5,6 @@ on:
         branches: [develop]
     workflow_dispatch:
 
-concurrency:
-    group: ${{ github.event_name == 'pull_request' && format('obre-{0}-{1}', github.workflow, github.head_ref) || github.run_id }}
-    cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-
 jobs:
     init:
         runs-on: ubuntu-24.04
