@@ -1,0 +1,39 @@
+name: Pull Request
+
+on: pull_request
+
+concurrency:
+  group: obre-${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+  init:
+    uses: ./.github/workflows/init.yml
+    secrets: inherit
+    permissions:
+      contents: read
+      packages: write
+
+  lint:
+    uses: ./.github/workflows/lint.yml
+    secrets: inherit
+
+  build:
+    uses: ./.github/workflows/build.yml
+    secrets: inherit
+    permissions:
+      contents: read
+      packages: read
+    needs:
+      - init
+      - lint
+
+  cleanup:
+    uses: ./.github/workflows/image_cleanup.yml
+    secrets: inherit
+    permissions:
+      contents: read
+      packages: write
+    needs:
+      - build
+    if: always()
