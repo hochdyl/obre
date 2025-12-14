@@ -111,3 +111,8 @@ tasks:
     desc: Install npm dependencies in the container
     cmds:
       - docker exec obre-app npm install
+
+  build:
+    desc: Build production bundle
+    cmds:
+      - docker exec -e NODE_ENV=production obre-app npm run build

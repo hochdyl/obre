@@ -1,0 +1,46 @@
+name: Push
+
+on:
+    push:
+        branches:
+            - main
+        tags:
+            - "*"
+
+concurrency:
+    group: obre-${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: false
+
+jobs:
+    init:
+        uses: ./.github/workflows/init.yaml
+        secrets: inherit
+
+    lint:
+        uses: ./.github/workflows/lint.yaml
+        secrets: inherit
+        needs:
+            - init
+
+    tests:
+        uses: ./.github/workflows/tests.yaml
+        secrets: inherit
+        needs:
+            - init
+            - lint
+
+    publish:
+        uses: ./.github/workflows/publish.yaml
+        secrets: inherit
+        needs:
+            - tests
+
+    cleanup:
+        uses: ./.github/workflows/image_cleanup.yaml
+        secrets: inherit
+        needs:
+            - init
+            - lint
+            - tests
+            - publish
+        if: always()

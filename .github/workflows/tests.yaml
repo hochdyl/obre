@@ -1,0 +1,50 @@
+name: Tests
+
+on:
+    workflow_call:
+
+jobs:
+    tests:
+        runs-on: ubuntu-24.04
+        name: ${{ matrix.tool.name }}
+        permissions: write-all
+        strategy:
+            fail-fast: false
+            matrix:
+                tool:
+                    - name: TypeScript Check
+                      command: tsc
+                    - name: Production Build
+                      command: build
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install Task
+              uses: go-task/setup-task@v1
+
+            - name: Login to Docker Registry
+              uses: docker/login-action@v3
+              with:
+                  registry: ghcr.io
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Pull Docker image
+              env:
+                  IMAGE: ghcr.io/${{ github.repository_owner }}/obre-app
+              run: docker pull $IMAGE:ci-${{ github.sha }}
+
+            - name: Tag image
+              env:
+                  IMAGE: ghcr.io/${{ github.repository_owner }}/obre-app
+              run: docker tag $IMAGE:ci-${{ github.sha }} obre-app:latest
+
+            - name: Create temporary container
+              run: |
+                  docker run -d --name obre-app \
+                    -v ${{ github.workspace }}:/usr/src/app \
+                    obre-app:latest \
+                    tail -f /dev/null
+
+            - name: Run ${{ matrix.tool.name }}
+              run: task ${{ matrix.tool.command }}
