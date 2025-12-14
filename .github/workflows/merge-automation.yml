@@ -28,6 +28,7 @@ jobs:
         permissions:
             contents: write
             pull-requests: write
+            actions: write
         steps:
             - uses: actions/checkout@v4
               with:
@@ -62,7 +63,18 @@ jobs:
                           if git merge develop --no-edit -m "chore: merge develop to trigger CI"; then
                               # Push the changes
                               if git push origin "$head_ref"; then
-                                  echo "✓ Successfully updated and triggered CI for PR #$pr_number"
+                                  echo "✓ Successfully pushed merge to PR #$pr_number"
+
+                                  # Trigger CI workflow manually (pushes from GITHUB_TOKEN don't auto-trigger workflows)
+                                  if gh api \
+                                      --method POST \
+                                      -H "Accept: application/vnd.github+json" \
+                                      "/repos/${{ github.repository }}/actions/workflows/pull-request.yml/dispatches" \
+                                      -f "ref=$head_ref"; then
+                                      echo "✓ Successfully triggered CI for PR #$pr_number"
+                                  else
+                                      echo "✗ Failed to trigger CI for PR #$pr_number"
+                                  fi
                               else
                                   echo "✗ Failed to push to PR #$pr_number"
                               fi
