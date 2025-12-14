@@ -14,5 +14,10 @@ jobs:
             contents: write
         steps:
             - name: Delete merged branch
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
-                  git push origin --delete ${{ github.event.pull_request.head.ref }}
+                  gh api \
+                    --method DELETE \
+                    -H "Accept: application/vnd.github+json" \
+                    /repos/${{ github.repository }}/git/refs/heads/${{ github.event.pull_request.head.ref }}
