@@ -6,8 +6,8 @@ on:
     workflow_dispatch:
 
 concurrency:
-    group: obre-${{ github.workflow }}-${{ github.head_ref }}
-    cancel-in-progress: true
+    group: ${{ github.event_name == 'pull_request' && format('obre-{0}-{1}', github.workflow, github.head_ref) || github.run_id }}
+    cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
     init:
