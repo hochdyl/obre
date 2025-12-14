@@ -22,29 +22,29 @@ jobs:
                     -H "Accept: application/vnd.github+json" \
                     /repos/${{ github.repository }}/git/refs/heads/${{ github.event.pull_request.head.ref }}
 
-    relaunch-open-prs:
+    retrigger-open-prs:
         if: github.event.pull_request.merged == true
         runs-on: ubuntu-24.04
         permissions:
-            actions: write
-            pull-requests: read
+        pull-requests: write
         steps:
-            - name: Relaunch CI for open PRs targeting develop
-              env:
-                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  REPO: ${{ github.repository }}
-              run: |
-                  prs=$(gh pr list \
-                      --repo "$REPO" \
-                      --base develop \
-                      --state open \
-                      --json number \
-                      -q '.[].number')
-  
-                  for pr in $prs; do
-                      echo "Relaunch CI for PR #$pr"
-                      gh api \
-                      -X POST \
-                      /repos/$REPO/actions/workflows/pull-request.yml/dispatches \
-                      -f ref=refs/pull/$pr/merge
-                  done
+        - name: Retrigger CI for open PRs (safe)
+          env:
+              GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              REPO: ${{ github.repository }}
+          run: |
+            prs=$(gh pr list \
+                --repo "$REPO" \
+                --base develop \
+                --state open \
+                --json number \
+                -q '.[].number')
+
+            for pr in $prs; do
+                echo "Trigger synchronize on PR #$pr"
+
+                gh api \
+                -X PATCH \
+                /repos/$REPO/pulls/$pr \
+                -f title="$(gh pr view $pr --repo $REPO --json title -q .title)"
+            done
