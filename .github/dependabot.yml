@@ -5,6 +5,7 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    rebase-strategy: "auto"
     open-pull-requests-limit: 10
     reviewers:
       - "hochdyl"
@@ -26,6 +27,7 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    rebase-strategy: "auto"
     open-pull-requests-limit: 5
     reviewers:
       - "hochdyl"
@@ -39,6 +41,7 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    rebase-strategy: "auto"
     open-pull-requests-limit: 5
     reviewers:
       - "hochdyl"
