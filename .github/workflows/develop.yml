@@ -1,9 +1,13 @@
-name: Pull Request
+name: Develop
 
 on:
-    pull_request:
-        branches: [develop]
-    workflow_dispatch:
+    push:
+        branches:
+            - develop
+
+concurrency:
+    group: obre-${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: false
 
 jobs:
     init:

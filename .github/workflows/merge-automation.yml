@@ -1,0 +1,81 @@
+name: Merge Automation
+
+on:
+    pull_request:
+        types: [closed]
+        branches:
+            - develop
+
+jobs:
+    delete-branch:
+        if: github.event.pull_request.merged == true
+        runs-on: ubuntu-24.04
+        permissions:
+            contents: write
+        steps:
+            - name: Delete merged branch
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  gh api \
+                    --method DELETE \
+                    -H "Accept: application/vnd.github+json" \
+                    /repos/${{ github.repository }}/git/refs/heads/${{ github.event.pull_request.head.ref }}
+
+    retrigger-open-prs:
+        if: github.event.pull_request.merged == true
+        runs-on: ubuntu-24.04
+        permissions:
+            contents: write
+            pull-requests: write
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  ref: develop
+                  fetch-depth: 0
+
+            - name: Update all open PRs with develop
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  # Configure git
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+
+                  # Get all open PRs targeting develop
+                  prs=$(gh pr list --repo ${{ github.repository }} --base develop --state open --json number,headRefName)
+
+                  # Count and display PRs
+                  pr_count=$(echo "$prs" | jq '. | length')
+                  echo "Found $pr_count open PR(s) targeting develop"
+
+                  # Process each PR
+                  echo "$prs" | jq -r '.[] | @json' | while IFS= read -r pr; do
+                      pr_number=$(echo "$pr" | jq -r '.number')
+                      head_ref=$(echo "$pr" | jq -r '.headRefName')
+
+                      echo "Updating PR #$pr_number (branch: $head_ref) with latest develop"
+
+                      # Checkout the PR branch
+                      if git checkout "$head_ref" 2>/dev/null || git checkout -b "$head_ref" "origin/$head_ref"; then
+                          # Merge develop into the PR branch
+                          if git merge develop --no-edit -m "chore: merge develop to trigger CI"; then
+                              # Push the changes
+                              if git push origin "$head_ref"; then
+                                  echo "✓ Successfully updated and triggered CI for PR #$pr_number"
+                              else
+                                  echo "✗ Failed to push to PR #$pr_number"
+                              fi
+                          else
+                              echo "⚠ Merge conflict in PR #$pr_number - skipping"
+                              git merge --abort 2>/dev/null || true
+                          fi
+                      else
+                          echo "✗ Failed to checkout branch for PR #$pr_number"
+                      fi
+
+                      # Return to develop
+                      git checkout develop
+                  done
+
+                  echo "Finished updating all open PRs"
