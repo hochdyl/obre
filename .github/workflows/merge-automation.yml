@@ -22,17 +22,29 @@ jobs:
                     -H "Accept: application/vnd.github+json" \
                     /repos/${{ github.repository }}/git/refs/heads/${{ github.event.pull_request.head.ref }}
 
-    rebase-dependabot-prs:
+    relaunch-open-prs:
         if: github.event.pull_request.merged == true
         runs-on: ubuntu-24.04
         permissions:
-            pull-requests: write
+            actions: write
+            pull-requests: read
         steps:
-            - uses: actions/checkout@v4
-
-            - name: Rebase all Dependabot PRs
+            - name: Relaunch CI for open PRs targeting develop
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  REPO: ${{ github.repository }}
               run: |
-                  chmod +x .github/dependabot.sh
-                  .github/dependabot.sh rebase
+                  prs=$(gh pr list \
+                      --repo "$REPO" \
+                      --base develop \
+                      --state open \
+                      --json number \
+                      -q '.[].number')
+  
+                  for pr in $prs; do
+                      echo "Relaunch CI for PR #$pr"
+                      gh api \
+                      -X POST \
+                      /repos/$REPO/actions/workflows/pull-request.yml/dispatches \
+                      -f ref=refs/pull/$pr/merge
+                  done
