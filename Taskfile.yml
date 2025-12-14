@@ -1,0 +1,113 @@
+version: "3"
+
+dotenv:
+  - .env.local
+  - .env
+
+vars:
+  # Colors
+  YELLOW: \033[1;33m
+  GREEN: \033[1;92m
+  BLUE: \033[1;34m
+  RED: \033[1;31m
+  RESET: \033[0m
+  # Directories
+  ROOT_DIR: .
+  CERTS_DIR: ./certs
+
+tasks:
+  default:
+    desc: Start the development stack
+    cmds:
+      - task: dev
+
+  dev:
+    desc: Start the complete stack
+    deps:
+      - generate:certs
+    cmds:
+      - silent: true
+        cmd: echo -e "{{.BLUE}}🚀 Starting the stack...{{.RESET}}"
+      - docker compose up -d --build
+      - silent: true
+        cmd: echo -e "{{.GREEN}}✅ Stack started at https://localhost:3000{{.RESET}}"
+
+  ci:
+    desc: Run full CI pipeline (lint, tsc, build)
+    deps:
+      - dev
+    cmds:
+      - silent: true
+        cmd: echo -e "{{.BLUE}}🔍 Running CI pipeline...{{.RESET}}"
+      - silent: true
+        cmd: echo -e "{{.YELLOW}}[1/3] Running ESLint...{{.RESET}}"
+      - task: lint
+      - silent: true
+        cmd: echo -e "{{.YELLOW}}[2/3] Running TypeScript check...{{.RESET}}"
+      - task: tsc
+      - silent: true
+        cmd: echo -e "{{.YELLOW}}[3/3] Building production...{{.RESET}}"
+      - docker exec -e NODE_ENV=production obre-app npm run build
+      - silent: true
+        cmd: echo -e "{{.GREEN}}✅ CI pipeline completed successfully!{{.RESET}}"
+
+  app:logs:
+    desc: Show only app logs
+    cmds:
+      - docker logs obre-app -f
+
+  app:shell:
+    desc: Open a shell in the container
+    cmds:
+      - docker exec -it obre-app sh
+
+  generate:certs:
+    desc: Generate SSL certificates for localhost
+    dir: "{{.CERTS_DIR}}"
+    status:
+      - test -f localhost-key.pem
+      - test -f localhost-cert.pem
+    cmds:
+      - silent: true
+        cmd: echo -e "{{.BLUE}}🔐 GGenerating SSL certificates...{{.RESET}}"
+      - mkcert localhost 127.0.0.1 ::1
+      - mv localhost+2-key.pem localhost-key.pem
+      - mv localhost+2.pem localhost-cert.pem
+      - silent: true
+        cmd: echo -e "{{.GREEN}}✅ Certificates generated{{.RESET}}"
+
+  clean:
+    desc: Clean containers, images, and volumes
+    cmds:
+      - silent: true
+        cmd: echo -e "{{.YELLOW}}🧹 Cleaning...{{.RESET}}"
+      - docker compose down -v --rmi local
+      - silent: true
+        cmd: echo -e "{{.GREEN}}✅ Cleaning completed{{.RESET}}"
+
+  nuke:
+    desc: Delete EVERYTHING (containers, images, volumes, certs)
+    prompt: Are you sure you want to delete everything?
+    cmds:
+      - silent: true
+        cmd: echo -e "{{.RED}}💣 Nuking in progress...{{.RESET}}"
+      - docker compose down -v --rmi all
+      - docker system prune -af
+      - rm -f {{.CERTS_DIR}}/localhost-*.pem
+      - silent: true
+        cmd: echo -e "{{.GREEN}}✅ Everything has been cleaned{{.RESET}}"
+
+  lint:
+    desc: Run ESLint
+    cmds:
+      - docker exec obre-app npm run lint
+
+  tsc:
+    desc: Run TypeScript compiler
+    cmds:
+      - docker exec obre-app npx tsc
+
+  install:
+    desc: Install npm dependencies in the container
+    cmds:
+      - docker exec obre-app npm install

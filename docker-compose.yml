@@ -1,0 +1,27 @@
+services:
+  app:
+    init: true
+    build:
+      context: .
+      target: dev
+    container_name: obre-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+      - .env.local
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - .:/usr/src/app
+      # We don't want to copy local binaries, 
+      # because they may not work since i'm
+      # using windows :upside_down_face:
+      - /usr/src/app/node_modules   
+      - /usr/src/app/.next
+    networks:
+      - obre-network
+
+networks:
+  obre-network:
