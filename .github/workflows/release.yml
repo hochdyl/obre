@@ -15,8 +15,6 @@ jobs:
     init:
         uses: ./.github/workflows/init.yaml
         secrets: inherit
-        with:
-            push-to-registry: true
 
     tests:
         uses: ./.github/workflows/tests.yaml
