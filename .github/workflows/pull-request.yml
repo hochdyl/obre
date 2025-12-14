@@ -10,23 +10,12 @@ jobs:
     init:
         uses: ./.github/workflows/init.yaml
         secrets: inherit
-
-    lint:
-        uses: ./.github/workflows/lint.yaml
-        secrets: inherit
-        needs:
-            - init
+        with:
+            push-to-registry: false
 
     tests:
         uses: ./.github/workflows/tests.yaml
         secrets: inherit
-        needs:
-            - init
-            - lint
-
-    cleanup:
-        uses: ./.github/workflows/image_cleanup.yaml
-        secrets: inherit
-        needs:
-            - tests
-        if: always()
+        needs: init
+        with:
+            use-registry-image: false

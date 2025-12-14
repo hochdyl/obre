@@ -1,11 +1,9 @@
-name: Push
+name: Develop
 
 on:
     push:
         branches:
-            - main
-        tags:
-            - "*"
+            - develop
 
 concurrency:
     group: obre-${{ github.workflow }}-${{ github.ref }}
@@ -15,32 +13,19 @@ jobs:
     init:
         uses: ./.github/workflows/init.yaml
         secrets: inherit
-
-    lint:
-        uses: ./.github/workflows/lint.yaml
-        secrets: inherit
-        needs:
-            - init
+        with:
+            push-to-registry: true
 
     tests:
         uses: ./.github/workflows/tests.yaml
         secrets: inherit
-        needs:
-            - init
-            - lint
-
-    publish:
-        uses: ./.github/workflows/publish.yaml
-        secrets: inherit
-        needs:
-            - tests
+        needs: init
+        with:
+            use-registry-image: true
 
     cleanup:
         uses: ./.github/workflows/image_cleanup.yaml
         secrets: inherit
         needs:
-            - init
-            - lint
             - tests
-            - publish
         if: always()

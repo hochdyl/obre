@@ -2,16 +2,26 @@ name: Tests
 
 on:
     workflow_call:
+        inputs:
+            use-registry-image:
+                description: 'Pull image from ghcr.io registry'
+                required: false
+                type: boolean
+                default: false
 
 jobs:
     tests:
         runs-on: ubuntu-24.04
-        name: ${{ matrix.tool.name }}
-        permissions: write-all
+        name: ${{ matrix.check.name }}
+        permissions:
+            contents: read
+            packages: read
         strategy:
             fail-fast: false
             matrix:
-                tool:
+                check:
+                    - name: ESLint
+                      command: lint
                     - name: TypeScript Check
                       command: tsc
                     - name: Production Build
@@ -19,20 +29,38 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
-            - name: Install Task
-              uses: go-task/setup-task@v1
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
 
             - name: Login to Docker Registry
+              if: ${{ inputs.use-registry-image }}
               uses: docker/login-action@v3
               with:
                   registry: ghcr.io
                   username: ${{ github.actor }}
                   password: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Pull Docker image
+            - name: Pull Docker image from registry
+              if: ${{ inputs.use-registry-image }}
               env:
                   IMAGE: ghcr.io/${{ github.repository_owner }}/obre-app
               run: docker pull $IMAGE:ci-${{ github.sha }}
+
+            - name: Build Docker image from cache
+              if: ${{ !inputs.use-registry-image }}
+              uses: docker/build-push-action@v6
+              env:
+                  IMAGE: ghcr.io/${{ github.repository_owner }}/obre-app
+              with:
+                  load: true
+                  context: .
+                  file: ./Dockerfile
+                  target: dev
+                  tags: ${{ env.IMAGE }}:ci-${{ github.sha }}
+                  cache-from: type=gha
+
+            - name: Install Task
+              uses: go-task/setup-task@v1
 
             - name: Tag image
               env:
@@ -46,5 +74,5 @@ jobs:
                     obre-app:latest \
                     tail -f /dev/null
 
-            - name: Run ${{ matrix.tool.name }}
-              run: task ${{ matrix.tool.command }}
+            - name: Run ${{ matrix.check.name }}
+              run: task ${{ matrix.check.command }}
