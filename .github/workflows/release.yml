@@ -15,6 +15,9 @@ jobs:
   init:
     uses: ./.github/workflows/init.yml
     secrets: inherit
+    permissions:
+      contents: read
+      packages: write
 
   lint:
     uses: ./.github/workflows/lint.yml
@@ -23,6 +26,9 @@ jobs:
   build:
     uses: ./.github/workflows/build.yml
     secrets: inherit
+    permissions:
+      contents: read
+      packages: read
     needs:
       - init
       - lint
@@ -30,6 +36,9 @@ jobs:
   cleanup:
     uses: ./.github/workflows/image_cleanup.yml
     secrets: inherit
+    permissions:
+      contents: read
+      packages: write
     needs:
       - build
     if: always()
