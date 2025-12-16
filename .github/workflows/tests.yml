@@ -1,0 +1,72 @@
+name: Tests
+
+on:
+    workflow_call:
+
+jobs:
+    changes:
+        runs-on: ubuntu-24.04
+        permissions:
+            contents: read
+            pull-requests: read
+        outputs:
+            app: ${{ steps.filter.outputs.app }}
+            docker: ${{ steps.filter.outputs.docker }}
+            npm: ${{ steps.filter.outputs.npm }}
+        steps:
+            - uses: actions/checkout@v4
+            - uses: dorny/paths-filter@v3
+              id: filter
+              with:
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  filters: |
+                      app:
+                          - .github/workflows/tests.yaml
+                          - 'src/**'
+                          - next.config.ts
+                          - tsconfig.json
+                          - eslint.config.mjs
+                          - server.js
+                          - Taskfile.yml
+                      docker:
+                          - .github/workflows/tests.yaml
+                          - Dockerfile
+                          - docker-compose.yml
+                      npm:
+                          - .github/workflows/tests.yaml
+                          - package.json
+                          - package-lock.json
+
+    app:
+        runs-on: ubuntu-24.04
+        name: ${{ matrix.check.name }}
+        if: ${{ needs.changes.outputs.app == 'true' || needs.changes.outputs.npm == 'true' }}
+        needs:
+            - changes
+        permissions:
+            contents: read
+        strategy:
+            fail-fast: false
+            matrix:
+                check:
+                    - name: TypeScript Check
+                      command: tsc
+                    - name: Production Build
+                      command: build
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '20'
+                  cache: 'npm'
+
+            - name: Install Task
+              uses: go-task/setup-task@v1
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Run ${{ matrix.check.name }}
+              run: task ${{ matrix.check.command }}

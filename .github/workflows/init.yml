@@ -27,9 +27,6 @@ jobs:
                   username: ${{ github.actor }}
                   password: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Install Task
-              uses: go-task/setup-task@v1
-
             - name: Build and push Docker image
               uses: docker/build-push-action@v6
               env:

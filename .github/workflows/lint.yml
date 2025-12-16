@@ -1,0 +1,39 @@
+name: Lint
+
+on:
+    workflow_call:
+
+jobs:
+    lint:
+        runs-on: ubuntu-24.04
+        name: ${{ matrix.tool.name }}
+        strategy:
+            fail-fast: false
+            matrix:
+                tool:
+                    - name: Hadolint
+                      command: hadolint
+                      needs_node: false
+                    - name: ESLint
+                      command: lint
+                      needs_node: true
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              if: ${{ matrix.tool.needs_node }}
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '20'
+                  cache: 'npm'
+
+            - name: Install Task
+              uses: go-task/setup-task@v1
+
+            - name: Install dependencies
+              if: ${{ matrix.tool.needs_node }}
+              run: npm ci
+
+            - name: Run ${{ matrix.tool.name }}
+              run: task ${{ matrix.tool.command }}
