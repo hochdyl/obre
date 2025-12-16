@@ -3,30 +3,28 @@ name: Pull Request
 on: pull_request
 
 concurrency:
-    group: obre-${{ github.workflow }}-${{ github.head_ref }}
-    cancel-in-progress: true
+  group: obre-${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
 
 jobs:
-    init:
-        uses: ./.github/workflows/init.yaml
-        secrets: inherit
+  init:
+    uses: ./.github/workflows/init.yml
+    secrets: inherit
 
-    lint:
-        uses: ./.github/workflows/lint.yaml
-        secrets: inherit
+  lint:
+    uses: ./.github/workflows/lint.yml
+    secrets: inherit
 
-    tests:
-        uses: ./.github/workflows/tests.yaml
-        secrets: inherit
-        needs:
-            - init
-            - lint
-        with:
-            use-registry-image: false
+  build:
+    uses: ./.github/workflows/build.yml
+    secrets: inherit
+    needs:
+      - init
+      - lint
 
-    cleanup:
-        uses: ./.github/workflows/image_cleanup.yaml
-        secrets: inherit
-        needs:
-            - tests
-        if: always()
+  cleanup:
+    uses: ./.github/workflows/image_cleanup.yml
+    secrets: inherit
+    needs:
+      - build
+    if: always()

@@ -15,10 +15,10 @@ services:
       - NODE_ENV=development
     volumes:
       - .:/usr/src/app
-      # We don't want to copy local binaries, 
+      # We don't want to copy local binaries,
       # because they may not work since i'm
       # using windows :upside_down_face:
-      - /usr/src/app/node_modules   
+      - /usr/src/app/node_modules
       - /usr/src/app/.next
     networks:
       - obre-network

@@ -1,0 +1,48 @@
+name: Build
+
+on:
+  workflow_call:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    name: Production Build
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull Docker image from registry
+        env:
+          IMAGE: ghcr.io/${{ github.repository_owner }}/obre-app
+        run: docker pull $IMAGE:ci-${{ github.sha }}
+
+      - name: Tag image
+        env:
+          IMAGE: ghcr.io/${{ github.repository_owner }}/obre-app
+        run: docker tag $IMAGE:ci-${{ github.sha }} obre-app:latest
+
+      - name: Create temporary container
+        run: |
+          docker run -d --name obre-app \
+            -v ${{ github.workspace }}:/usr/src/app \
+            -v /usr/src/app/node_modules \
+            obre-app:latest \
+            tail -f /dev/null
+
+      - name: Install dependencies
+        run: docker exec obre-app npm ci
+
+      - name: Run Production Build
+        run: docker exec -e NODE_ENV=production obre-app npm run build

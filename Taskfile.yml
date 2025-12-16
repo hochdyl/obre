@@ -40,16 +40,19 @@ tasks:
       - silent: true
         cmd: echo -e "{{.BLUE}}🔍 Running CI pipeline...{{.RESET}}"
       - silent: true
-        cmd: echo -e "{{.YELLOW}}[1/4] Running Hadolint...{{.RESET}}"
+        cmd: echo -e "{{.YELLOW}}[1/5] Running Hadolint...{{.RESET}}"
       - task: hadolint
       - silent: true
-        cmd: echo -e "{{.YELLOW}}[2/4] Running ESLint...{{.RESET}}"
+        cmd: echo -e "{{.YELLOW}}[2/5] Running YAML check...{{.RESET}}"
+      - task: yaml
+      - silent: true
+        cmd: echo -e "{{.YELLOW}}[3/5] Running ESLint...{{.RESET}}"
       - task: lint
       - silent: true
-        cmd: echo -e "{{.YELLOW}}[3/4] Running TypeScript check...{{.RESET}}"
+        cmd: echo -e "{{.YELLOW}}[4/5] Running TypeScript check...{{.RESET}}"
       - task: tsc
       - silent: true
-        cmd: echo -e "{{.YELLOW}}[4/4] Building production...{{.RESET}}"
+        cmd: echo -e "{{.YELLOW}}[5/5] Building production...{{.RESET}}"
       - task: build
       - silent: true
         cmd: echo -e "{{.GREEN}}✅ CI pipeline completed successfully!{{.RESET}}"
@@ -105,20 +108,27 @@ tasks:
     cmds:
       - bash bin/hadolint
 
+  yaml:
+    desc: Format/check YAML files
+    env:
+      YAML_FILES: "**/*.{yml,yaml}"
+    cmds:
+      - '{{.RUN}} npx prettier {{if eq .CI "true"}}-c{{else}}--write{{end}} "{{.YAML_FILES}}"'
+
   lint:
     desc: Run ESLint
     cmds:
-      - '{{.RUN}} npm run lint'
+      - "{{.RUN}} npm run lint"
 
   tsc:
     desc: Run TypeScript compiler
     cmds:
-      - '{{.RUN}} npx tsc --noEmit'
+      - "{{.RUN}} npx tsc --noEmit"
 
   install:
     desc: Install npm dependencies in the container
     cmds:
-      - '{{.RUN}} npm install'
+      - "{{.RUN}} npm install"
 
   build:
     desc: Build production bundle

@@ -1,23 +1,23 @@
 name: Branch Cleanup
 
 on:
-    pull_request:
-        types: [closed]
-        branches:
-            - develop
+  pull_request:
+    types: [closed]
+    branches:
+      - develop
 
 jobs:
-    cleanup:
-        if: github.event.pull_request.merged == true
-        runs-on: ubuntu-24.04
-        permissions:
-            contents: write
-        steps:
-            - name: Delete merged branch
-              env:
-                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: |
-                  gh api \
-                    --method DELETE \
-                    -H "Accept: application/vnd.github+json" \
-                    /repos/${{ github.repository }}/git/refs/heads/${{ github.event.pull_request.head.ref }}
+  cleanup:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: Delete merged branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api \
+            --method DELETE \
+            -H "Accept: application/vnd.github+json" \
+            /repos/${{ github.repository }}/git/refs/heads/${{ github.event.pull_request.head.ref }}

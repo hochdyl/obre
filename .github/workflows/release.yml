@@ -1,31 +1,35 @@
 name: Release
 
 on:
-    push:
-        branches:
-            - main
-        tags:
-            - "v*"
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
 
 concurrency:
-    group: obre-${{ github.workflow }}-${{ github.ref }}
-    cancel-in-progress: false
+  group: obre-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-    init:
-        uses: ./.github/workflows/init.yaml
-        secrets: inherit
+  init:
+    uses: ./.github/workflows/init.yml
+    secrets: inherit
 
-    tests:
-        uses: ./.github/workflows/tests.yaml
-        secrets: inherit
-        needs: init
-        with:
-            use-registry-image: true
+  lint:
+    uses: ./.github/workflows/lint.yml
+    secrets: inherit
 
-    cleanup:
-        uses: ./.github/workflows/image_cleanup.yaml
-        secrets: inherit
-        needs:
-            - tests
-        if: always()
+  build:
+    uses: ./.github/workflows/build.yml
+    secrets: inherit
+    needs:
+      - init
+      - lint
+
+  cleanup:
+    uses: ./.github/workflows/image_cleanup.yml
+    secrets: inherit
+    needs:
+      - build
+    if: always()
