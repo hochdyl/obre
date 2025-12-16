@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+# List of dockerfiles
+dockerfiles=(
+    "Dockerfile"
+)
+
+exit_code=0
+
+# Run hadolint for each file
+for file in "${dockerfiles[@]}"; do
+    echo "──────────────────────────────"
+    echo "Linting $file"
+
+    if ! docker run --rm -i -v "$(pwd)":/workspace -w /workspace hadolint/hadolint < "$file"; then
+        echo "❌ File $file has errors"
+
+        exit_code=1
+    else
+        echo "✅ File $file is valid"
+    fi
+done
+
+echo "──────────────────────────────"
+if [ $exit_code -ne 0 ]; then
+    echo "❌ One or more Dockerfiles are invalid"
+    exit $exit_code
+else
+    echo "✅ All Dockerfiles are valid"
+fi
