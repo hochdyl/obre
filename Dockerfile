@@ -1,4 +1,4 @@
-FROM node:25.2.1-alpine3.22 AS dev
+FROM node:25.7.0-alpine3.22 AS dev
 
 WORKDIR /usr/src/app
 
@@ -12,7 +12,7 @@ CMD ["npm", "run", "dev"]
 
 ########################################
 
-FROM node:25.2.1-alpine3.22 AS prod
+FROM node:25.7.0-alpine3.22 AS prod
 
 RUN apk add --no-cache dumb-init
 
