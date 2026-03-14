@@ -1,0 +1,29 @@
+.cardWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.cardMedia {
+  width: 100%;
+
+  & hover-tilt {
+    display: block;
+    width: 100%;
+    border-radius: inherit;
+  }
+}
+
+.cardImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-position: center;
+  border-radius: inherit;
+}
+
+.cardTitle {
+  font-size: 0.95rem;
+  margin: 0;
+  color: var(--foreground);
+}
