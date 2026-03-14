@@ -8,7 +8,7 @@ import styles from "./page.module.css";
 const cards = [
   {
     title: "Obre 01",
-    src: "/illustrations/test.png",
+    src: "https://mdn.github.io/shared-assets/images/examples/balloon.jpg",
     effects: [
       withHoverTilt({
         tiltFactor: 1.2,
@@ -23,7 +23,7 @@ const cards = [
   },
   {
     title: "Obre 02",
-    src: "/illustrations/test.png",
+    src: "https://mdn.github.io/shared-assets/images/examples/balloon.jpg",
     effects: [
       withHoverTilt({
         tiltFactor: 1.2,
@@ -37,11 +37,11 @@ const cards = [
   },
   {
     title: "Obre 03",
-    src: "/illustrations/test.png",
+    src: "https://mdn.github.io/shared-assets/images/examples/balloon.jpg",
   },
   {
     title: "Obre 04",
-    src: "/illustrations/test2.png",
+    src: "https://mdn.github.io/shared-assets/images/examples/balloon.jpg",
     effects: [
       withHoverTilt({
         tiltFactor: 1.2,
@@ -55,7 +55,7 @@ const cards = [
   },
   {
     title: "Obre 05",
-    src: "/illustrations/test.png",
+    src: "https://mdn.github.io/shared-assets/images/examples/balloon.jpg",
     effects: [withGlint()],
   },
 ];

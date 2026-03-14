@@ -26,7 +26,7 @@ const RootLayout = ({ children }: PropsWithChildren) => (
     >
       {children}
       <footer>
-        <p>© {new Date().getFullYear()} Obre. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} Obre.</p>
       </footer>
     </body>
   </html>
