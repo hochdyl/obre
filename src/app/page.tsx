@@ -1,64 +1,5 @@
-import Card from "@/components/atoms/Card";
-import {
-  withHoverTilt,
-  withGlint,
-} from "@/components/molecules/HoverTilt/effects";
+import TiltableCard from "@/components/atoms/TiltableCard/TiltableCard";
 import styles from "./page.module.css";
-
-const cards = [
-  {
-    title: "Obre 01",
-    src: "https://mdn.github.io/shared-assets/images/examples/balloon.jpg",
-    effects: [
-      withHoverTilt({
-        tiltFactor: 1.2,
-        scaleFactor: 1.05,
-        shadow: true,
-        glareIntensity: 1.8,
-        glareHue: 270,
-        blendMode: "overlay",
-      }),
-      withGlint(),
-    ],
-  },
-  {
-    title: "Obre 02",
-    src: "https://mdn.github.io/shared-assets/images/examples/balloon.jpg",
-    effects: [
-      withHoverTilt({
-        tiltFactor: 1.2,
-        scaleFactor: 1.05,
-        shadow: true,
-        glareIntensity: 1.8,
-        glareHue: 230,
-        blendMode: "overlay",
-      }),
-    ],
-  },
-  {
-    title: "Obre 03",
-    src: "https://mdn.github.io/shared-assets/images/examples/balloon.jpg",
-  },
-  {
-    title: "Obre 04",
-    src: "https://mdn.github.io/shared-assets/images/examples/balloon.jpg",
-    effects: [
-      withHoverTilt({
-        tiltFactor: 1.2,
-        scaleFactor: 1.05,
-        shadow: true,
-        glareIntensity: 1,
-        glareHue: 160,
-        blendMode: "overlay",
-      }),
-    ],
-  },
-  {
-    title: "Obre 05",
-    src: "https://mdn.github.io/shared-assets/images/examples/balloon.jpg",
-    effects: [withGlint()],
-  },
-];
 
 export default function Home() {
   return (
@@ -68,14 +9,11 @@ export default function Home() {
       </header>
 
       <section className={styles.grid}>
-        {cards.map((card) => (
-          <Card
-            key={card.title}
-            title={card.title}
-            src={card.src}
-            effects={card.effects}
-          />
-        ))}
+        <TiltableCard
+          src="/illustrations/balloon.jpg"
+          tilt={{ tiltFactor: 1.2, scaleFactor: 1.05, shadow: true }}
+        />
+        <TiltableCard src="/illustrations/balloon.jpg" />
       </section>
     </main>
   );
