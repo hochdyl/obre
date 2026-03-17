@@ -1,17 +1,86 @@
-.cardWrapper {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-3);
-}
-
-.cardMedia {
+.card {
+  position: relative;
   width: 100%;
+
+  --card-radius: 12% / 10%;
+  --glitter: url("/textures/glitter.png");
+  --glittersize: 25%;
 }
 
 .cardImage {
   display: block;
   width: 100%;
   height: auto;
-  object-position: center;
-  border-radius: inherit;
+  border-radius: var(--card-radius);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.shineBase {
+  --background-x: calc(var(--hover-tilt-x, 0.5) * 100%);
+  --background-y: calc(var(--hover-tilt-y, 0.5) * 100%);
+  --pointer-x: calc(var(--hover-tilt-x, 0.5) * 100%);
+  --pointer-y: calc(var(--hover-tilt-y, 0.5) * 100%);
+  --pointer-from-center: clamp(
+    0,
+    calc(
+      sqrt(
+          (var(--hover-tilt-x, 0.5) - 0.5) * (var(--hover-tilt-x, 0.5) - 0.5) +
+            (var(--hover-tilt-y, 0.5) - 0.5) * (var(--hover-tilt-y, 0.5) - 0.5)
+        ) *
+        2
+    ),
+    1
+  );
+  --pointer-from-left: var(--hover-tilt-x, 0.5);
+  --pointer-from-top: var(--hover-tilt-y, 0.5);
+  --card-opacity: var(--hover-tilt-opacity, 0);
+
+  position: absolute;
+  inset: 0;
+  clip-path: inset(0 round var(--card-radius));
+  pointer-events: none;
+  display: grid;
+  opacity: var(--hover-tilt-opacity, 0);
+  mask-image: var(--mask-image, none);
+  mask-size: cover;
+  mask-position: center;
+}
+
+.shineBase::before,
+.shineBase::after {
+  content: "";
+  grid-area: 1 / 1;
+  mask-image: var(--mask-image, none);
+  mask-size: cover;
+  mask-position: center;
+}
+
+.glareBase {
+  --pointer-x: calc(var(--hover-tilt-x, 0.5) * 100%);
+  --pointer-y: calc(var(--hover-tilt-y, 0.5) * 100%);
+  --pointer-from-center: clamp(
+    0,
+    calc(
+      sqrt(
+          (var(--hover-tilt-x, 0.5) - 0.5) * (var(--hover-tilt-x, 0.5) - 0.5) +
+            (var(--hover-tilt-y, 0.5) - 0.5) * (var(--hover-tilt-y, 0.5) - 0.5)
+        ) *
+        2
+    ),
+    1
+  );
+  --pointer-from-top: var(--hover-tilt-y, 0.5);
+  --card-opacity: var(--hover-tilt-opacity, 0);
+
+  position: absolute;
+  inset: 0;
+  clip-path: inset(0 round var(--card-radius));
+  pointer-events: none;
+  display: grid;
+}
+
+.glareBase::after {
+  content: "";
+  grid-area: 1 / 1;
 }

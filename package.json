@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "preview": "npm run build && npx serve out",
+    "preview": "npm run fix && npm run build && npx serve out",
     "prebuild": "npm run check",
     "build": "next build",
     "lint": "eslint . --fix",

@@ -1,0 +1,128 @@
+.shine {
+  --space: 5%;
+  --angle: 133deg;
+  --clr-1: hsl(2deg 100% 73%);
+  --clr-2: hsl(53deg 100% 69%);
+  --clr-3: hsl(93deg 100% 69%);
+  --clr-4: hsl(176deg 100% 76%);
+  --clr-5: hsl(228deg 100% 74%);
+  --clr-6: hsl(283deg 100% 73%);
+
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      var(--clr-1) calc(var(--space) * 1),
+      var(--clr-2) calc(var(--space) * 2),
+      var(--clr-3) calc(var(--space) * 3),
+      var(--clr-4) calc(var(--space) * 4),
+      var(--clr-5) calc(var(--space) * 5),
+      var(--clr-6) calc(var(--space) * 6),
+      var(--clr-1) calc(var(--space) * 7)
+    ),
+    repeating-linear-gradient(
+      var(--angle),
+      #0e152e 0%,
+      hsl(180deg 10% 60%) 3.8%,
+      hsl(180deg 29% 66%) 4.5%,
+      hsl(180deg 10% 60%) 5.2%,
+      #0e152e 10%,
+      #0e152e 12%
+    ),
+    radial-gradient(
+      farthest-corner circle at var(--pointer-x) var(--pointer-y),
+      hsl(0deg 0% 0% / 10%) 12%,
+      hsl(0deg 0% 0% / 15%) 20%,
+      hsl(0deg 0% 0% / 25%) 120%
+    );
+  background-position:
+    0% var(--background-y),
+    calc(var(--background-x) + (var(--background-y) * 0.2)) var(--background-y),
+    var(--background-x) var(--background-y);
+  background-blend-mode: soft-light, hue, hard-light;
+  background-size:
+    200% 700%,
+    300% 100%,
+    200% 100%;
+  filter: brightness(calc((var(--pointer-from-center) * 0.4) + 0.4))
+    contrast(1.4) saturate(2.25);
+  mix-blend-mode: color-dodge;
+}
+
+.shine::before {
+  mask-image: none !important;
+  background-image: radial-gradient(
+    farthest-corner circle at var(--pointer-x) var(--pointer-y),
+    hsl(0deg 0% 100%) 0%,
+    hsl(0deg 0% 0% / 0%) 40%
+  );
+  background-position: center;
+  background-size: cover;
+  mix-blend-mode: overlay;
+  opacity: 0.75;
+  z-index: 1;
+}
+
+.shine::after {
+  --after-clr-1: hsl(283deg 100% 73%);
+  --after-clr-2: hsl(2deg 100% 73%);
+  --after-clr-3: hsl(53deg 100% 69%);
+  --after-clr-4: hsl(93deg 100% 69%);
+  --after-clr-5: hsl(176deg 100% 76%);
+  --after-clr-6: hsl(228deg 100% 74%);
+
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      var(--after-clr-1) calc(var(--space) * 1),
+      var(--after-clr-2) calc(var(--space) * 2),
+      var(--after-clr-3) calc(var(--space) * 3),
+      var(--after-clr-4) calc(var(--space) * 4),
+      var(--after-clr-5) calc(var(--space) * 5),
+      var(--after-clr-6) calc(var(--space) * 6),
+      var(--after-clr-1) calc(var(--space) * 7)
+    ),
+    repeating-linear-gradient(
+      var(--angle),
+      #0e152e 0%,
+      hsl(180deg 10% 60%) 3.8%,
+      hsl(180deg 29% 66%) 4.5%,
+      hsl(180deg 10% 60%) 5.2%,
+      #0e152e 10%,
+      #0e152e 12%
+    ),
+    radial-gradient(
+      farthest-corner circle at var(--pointer-x) var(--pointer-y),
+      hsl(0deg 0% 0% / 10%) 12%,
+      hsl(0deg 0% 0% / 15%) 20%,
+      hsl(0deg 0% 0% / 25%) 120%
+    );
+  background-position:
+    0% var(--background-y),
+    calc((var(--background-x) + (var(--background-y) * 0.2)) * -1)
+      calc(var(--background-y) * -1),
+    var(--background-x) var(--background-y);
+  background-size:
+    200% 400%,
+    195% 100%,
+    200% 100%;
+  filter: brightness(calc((var(--pointer-from-center) * 0.4) + 0.8))
+    contrast(1.5) saturate(1.25);
+  mix-blend-mode: exclusion;
+}
+
+.glare {
+  background-image: radial-gradient(
+    farthest-corner circle at var(--pointer-x) var(--pointer-y),
+    hsl(0deg 0% 100%) 0%,
+    hsl(320deg 5% 15%) 150%
+  );
+  background-size: cover;
+  background-position: center center;
+  mix-blend-mode: multiply;
+  filter: brightness(1.2) contrast(1) saturate(0.7);
+  opacity: calc(var(--card-opacity) * var(--pointer-from-center));
+}
+
+.glare::after {
+  content: none;
+}

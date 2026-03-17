@@ -1,19 +1,39 @@
-import TiltableCard from "@/components/atoms/TiltableCard/TiltableCard";
+import TiltableCard, {
+  type HoloEffectType,
+  type MaskConfig,
+} from "@/components/atoms/TiltableCard/TiltableCard";
 import styles from "./page.module.css";
+
+const effects: (HoloEffectType | undefined)[] = [
+  undefined,
+  "holo",
+  "cosmos",
+  "rainbow",
+  "reverse",
+  "shiny",
+];
+
+const maskConfigs: Record<HoloEffectType, MaskConfig> = {
+  holo: { src: "/illustrations/1/mask.png", effect: "holo" },
+  cosmos: { src: "/illustrations/1/mask.png", effect: "cosmos" },
+  rainbow: { src: "/illustrations/1/mask.png", effect: "rainbow" },
+  reverse: { src: "/illustrations/1/mask.png", effect: "reverse" },
+  shiny: { src: "/illustrations/1/mask.png", effect: "shiny" },
+};
 
 export default function Home() {
   return (
     <main className={styles.page}>
-      <header className={styles.hero}>
-        <h1 className={styles.title}>Obreatlas</h1>
-      </header>
-
       <section className={styles.grid}>
-        <TiltableCard
-          src="/illustrations/balloon.jpg"
-          tilt={{ tiltFactor: 1.2, scaleFactor: 1.05, shadow: true }}
-        />
-        <TiltableCard src="/illustrations/balloon.jpg" />
+        {effects.map((effect) => (
+          <div key={effect ?? "none"} className={styles.cardWrapper}>
+            <TiltableCard
+              src="/illustrations/1/image.png"
+              masks={effect ? maskConfigs[effect] : undefined}
+            />
+            <span className={styles.effectLabel}>{effect ?? "no effect"}</span>
+          </div>
+        ))}
       </section>
     </main>
   );
