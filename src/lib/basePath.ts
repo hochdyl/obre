@@ -1,3 +1,6 @@
-export const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+const GITHUB_PAGES_REPOSITORY = "obre";
+const isProduction = process.env.NODE_ENV === "production";
+
+export const basePath = isProduction ? `/${GITHUB_PAGES_REPOSITORY}` : "";
 
 export const asset = (path: string) => `${basePath}${path}`;
