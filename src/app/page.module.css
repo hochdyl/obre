@@ -19,17 +19,6 @@
   }
 }
 
-.hero {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-2);
-}
-
-.title {
-  margin: 0;
-  font-size: clamp(1.8rem, 2.8vw, 2.6rem);
-}
-
 .grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -40,7 +29,21 @@
   }
 
   @media (width >= 768px) {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: var(--spacing-5);
   }
+}
+
+.cardWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  align-items: center;
+}
+
+.effectLabel {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary, #888);
+  text-transform: capitalize;
+  font-weight: 500;
 }

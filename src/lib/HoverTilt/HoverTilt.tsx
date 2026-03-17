@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { memo, useEffect, useRef, type ReactNode } from "react";
 import type { HoverTiltProps } from "hover-tilt/types";
 import styles from "./HoverTilt.module.css";
 
@@ -17,15 +17,47 @@ const loadHoverTilt = () => {
   return hoverTiltLoadPromise;
 };
 
-export type HoverTiltOptions = HoverTiltProps & { className?: string };
+export type HoverTiltOptions = Pick<
+  HoverTiltProps,
+  | "tiltFactor"
+  | "tiltFactorY"
+  | "scaleFactor"
+  | "springOptions"
+  | "tiltSpringOptions"
+  | "enterDelay"
+  | "exitDelay"
+  | "shadow"
+  | "shadowBlur"
+  | "blendMode"
+  | "glareIntensity"
+  | "glareHue"
+  | "glareMask"
+  | "glareMaskMode"
+  | "glareMaskComposite"
+> & { className?: string };
 export type HoverTiltComponentProps = HoverTiltOptions & {
   children?: ReactNode;
 };
 
-const toKebab = (s: string) =>
-  s.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`);
-
-const HoverTilt = ({ children, ...props }: HoverTiltComponentProps) => {
+const HoverTilt = memo(function HoverTilt({
+  children,
+  className,
+  tiltFactor,
+  tiltFactorY,
+  scaleFactor,
+  springOptions,
+  tiltSpringOptions,
+  enterDelay,
+  exitDelay,
+  shadow,
+  shadowBlur,
+  blendMode,
+  glareIntensity,
+  glareHue,
+  glareMask,
+  glareMaskMode,
+  glareMaskComposite,
+}: HoverTiltComponentProps) {
   const ref = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -36,27 +68,60 @@ const HoverTilt = ({ children, ...props }: HoverTiltComponentProps) => {
     const el = ref.current;
     if (!el) return;
 
-    for (const [k, v] of Object.entries(props)) {
-      // Skip children and className as they are not attributes of the web component
-      if (k === "children" || k === "className") continue;
-      const attr = toKebab(k);
-      if (v === false || v == null) el.removeAttribute(attr);
-      else
-        el.setAttribute(
-          attr,
-          typeof v === "object" ? JSON.stringify(v) : String(v)
-        );
+    const attrs: [string, unknown][] = [
+      ["tilt-factor", tiltFactor],
+      ["tilt-factor-y", tiltFactorY],
+      ["scale-factor", scaleFactor],
+      ["spring-options", springOptions],
+      ["tilt-spring-options", tiltSpringOptions],
+      ["enter-delay", enterDelay],
+      ["exit-delay", exitDelay],
+      ["shadow", shadow],
+      ["shadow-blur", shadowBlur],
+      ["blend-mode", blendMode],
+      ["glare-intensity", glareIntensity],
+      ["glare-hue", glareHue],
+      ["glare-mask", glareMask],
+      ["glare-mask-mode", glareMaskMode],
+      ["glare-mask-composite", glareMaskComposite],
+    ];
+
+    for (const [attr, value] of attrs) {
+      if (value === false || value == null) {
+        el.removeAttribute(attr);
+        continue;
+      }
+      el.setAttribute(
+        attr,
+        typeof value === "object" ? JSON.stringify(value) : String(value)
+      );
     }
-  }, [props]);
+  }, [
+    tiltFactor,
+    tiltFactorY,
+    scaleFactor,
+    springOptions,
+    tiltSpringOptions,
+    enterDelay,
+    exitDelay,
+    shadow,
+    shadowBlur,
+    blendMode,
+    glareIntensity,
+    glareHue,
+    glareMask,
+    glareMaskMode,
+    glareMaskComposite,
+  ]);
 
   return (
     <hover-tilt
       ref={ref}
-      className={`${styles.root} ${props.className ?? ""}`.trim()}
+      className={className ? `${styles.root} ${className}` : styles.root}
     >
       {children}
     </hover-tilt>
   );
-};
+});
 
 export default HoverTilt;

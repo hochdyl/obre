@@ -1,0 +1,52 @@
+.shine {
+  background-image:
+    radial-gradient(
+      circle at var(--pointer-x) var(--pointer-y),
+      #fff 5%,
+      #000 50%,
+      #fff 80%
+    ),
+    linear-gradient(-45deg, #000 15%, #fff, #000 85%);
+  background-blend-mode: soft-light, difference;
+  background-size:
+    120% 120%,
+    200% 200%;
+  background-position:
+    center center,
+    calc(100% * var(--pointer-from-left)) calc(100% * var(--pointer-from-top));
+  filter: brightness(0.55) contrast(1.5) saturate(1);
+  mix-blend-mode: color-dodge;
+  opacity: calc((1.5 * var(--card-opacity)) - var(--pointer-from-center));
+}
+
+.shine::before {
+  content: none;
+}
+
+.shine::after {
+  content: none;
+}
+
+.glare {
+  opacity: var(--card-opacity);
+  background-image: radial-gradient(
+    farthest-corner circle at var(--pointer-x) var(--pointer-y),
+    hsl(0deg 0% 100% / 80%) 10%,
+    hsl(0deg 0% 100% / 50%) 20%,
+    hsl(0deg 0% 0% / 75%) 90%
+  );
+  filter: brightness(0.7) contrast(1.5);
+  mix-blend-mode: overlay;
+}
+
+.glare::after {
+  opacity: var(--card-opacity);
+  background-image: radial-gradient(
+    farthest-corner circle at var(--pointer-x) var(--pointer-y),
+    hsl(0deg 0% 100%) 10%,
+    hsl(0deg 0% 100% / 50%) 20%,
+    hsl(0deg 0% 0% / 50%) 120%
+  );
+  filter: brightness(1) contrast(1.5);
+  mix-blend-mode: overlay;
+}
