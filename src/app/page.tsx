@@ -2,6 +2,7 @@ import TiltableCard, {
   type HoloEffectType,
   type MaskConfig,
 } from "@/components/atoms/TiltableCard/TiltableCard";
+import { asset } from "@/lib/basePath";
 import styles from "./page.module.css";
 
 const effects: (HoloEffectType | undefined)[] = [
@@ -14,11 +15,11 @@ const effects: (HoloEffectType | undefined)[] = [
 ];
 
 const maskConfigs: Record<HoloEffectType, MaskConfig> = {
-  holo: { src: "/illustrations/1/mask.png", effect: "holo" },
-  cosmos: { src: "/illustrations/1/mask.png", effect: "cosmos" },
-  rainbow: { src: "/illustrations/1/mask.png", effect: "rainbow" },
-  reverse: { src: "/illustrations/1/mask.png", effect: "reverse" },
-  shiny: { src: "/illustrations/1/mask.png", effect: "shiny" },
+  holo: { src: asset("/illustrations/1/mask.png"), effect: "holo" },
+  cosmos: { src: asset("/illustrations/1/mask.png"), effect: "cosmos" },
+  rainbow: { src: asset("/illustrations/1/mask.png"), effect: "rainbow" },
+  reverse: { src: asset("/illustrations/1/mask.png"), effect: "reverse" },
+  shiny: { src: asset("/illustrations/1/mask.png"), effect: "shiny" },
 };
 
 export default function Home() {
@@ -28,7 +29,7 @@ export default function Home() {
         {effects.map((effect) => (
           <div key={effect ?? "none"} className={styles.cardWrapper}>
             <TiltableCard
-              src="/illustrations/1/image.png"
+              src={asset("/illustrations/1/image.png")}
               masks={effect ? maskConfigs[effect] : undefined}
             />
             <span className={styles.effectLabel}>{effect ?? "no effect"}</span>
