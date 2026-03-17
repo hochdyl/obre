@@ -2,11 +2,16 @@
   "name": "obre",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "next dev",
-    "preview": "npm run fix && npm run build && npx serve out",
+    "preview": "npm run fix && npm run build && node serve-preview-build.js",
     "prebuild": "npm run check",
     "build": "next build",
+    "postbuild": "node fix-css-paths-for-github-pages.js",
     "lint": "eslint . --fix",
     "lint:check": "eslint .",
     "format": "prettier . --write",
