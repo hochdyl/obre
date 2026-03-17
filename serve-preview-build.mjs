@@ -1,8 +1,8 @@
 import { rmSync, mkdirSync, readdirSync, renameSync } from "node:fs";
 import { join } from "node:path";
 import { spawn } from "node:child_process";
-import { GITHUB_PAGES_REPOSITORY } from "./github-pages.config.js";
 
+const GITHUB_PAGES_REPOSITORY = "obre";
 const OUT_DIR = join(import.meta.dirname, "out");
 const NESTED_DIR = join(OUT_DIR, GITHUB_PAGES_REPOSITORY);
 

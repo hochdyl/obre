@@ -1,6 +1,7 @@
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { GITHUB_PAGES_REPOSITORY } from "./github-pages.config.js";
+
+const GITHUB_PAGES_REPOSITORY = "obre";
 const OUT_DIR = join(import.meta.dirname, "out/_next/static/chunks");
 
 const fixPaths = async () => {

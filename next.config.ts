@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
-import { GITHUB_PAGES_REPOSITORY } from "./github-pages.config.js";
+
+const GITHUB_PAGES_REPOSITORY = "obre";
 
 const isProduction = process.env.NODE_ENV === "production";
 const basePath = isProduction ? `/${GITHUB_PAGES_REPOSITORY}` : "";
