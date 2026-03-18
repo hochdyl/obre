@@ -1,18 +1,8 @@
 .body {
-  color: var(--foreground);
-  background: var(--background);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  color: var(--color-text);
   min-height: 100vh;
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-7);
-  font-family: var(--font-geist-sans);
-
-  @media (width >= 640px) {
-    gap: var(--spacing-8);
-  }
+  font-family: var(--font-serif, Georgia), serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }

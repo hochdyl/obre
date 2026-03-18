@@ -1,6 +1,10 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-sky-light: #a8dce6;
+  --color-sky: #5bbcd0;
+  --color-sky-deep: #3ba4b8;
+  --color-text: #1a3a42;
+  --color-text-light: #2d5a66;
+
   --spacing-1: 4px;
   --spacing-2: 8px;
   --spacing-3: 12px;
@@ -12,15 +16,6 @@
   --spacing-10: 40px;
   --spacing-12: 48px;
   --spacing-16: 64px;
-}
-
-/* Breakpoints: sm 640px · md 768px · lg 1024px · xl 1280px */
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 html,
@@ -40,8 +35,7 @@ a {
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+hover-tilt::part(tilt) {
+  border-radius: var(--card-radius, 4%);
+  overflow: hidden;
 }

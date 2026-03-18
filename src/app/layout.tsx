@@ -1,18 +1,14 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Crimson_Pro } from "next/font/google";
 import "./globals.css";
 import styles from "./layout.module.css";
 
 import type { PropsWithChildren } from "react";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const crimsonPro = Crimson_Pro({
+  variable: "--font-serif",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["400", "600"],
 });
 
 export const metadata: Metadata = {
@@ -20,15 +16,8 @@ export const metadata: Metadata = {
 };
 
 const RootLayout = ({ children }: PropsWithChildren) => (
-  <html lang="en">
-    <body
-      className={`${geistSans.variable} ${geistMono.variable} ${styles.body}`}
-    >
-      {children}
-      <footer>
-        <p>© {new Date().getFullYear()} Obre.</p>
-      </footer>
-    </body>
+  <html lang="fr">
+    <body className={`${crimsonPro.variable} ${styles.body}`}>{children}</body>
   </html>
 );
 

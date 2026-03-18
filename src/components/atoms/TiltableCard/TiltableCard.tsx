@@ -101,7 +101,7 @@ const TiltableCard = memo(function TiltableCard({
   src,
   masks,
   className,
-  tiltFactor = 1.2,
+  tiltFactor = 0.6,
   tiltFactorY,
   scaleFactor = 1.05,
   shadow = true,
@@ -123,6 +123,7 @@ const TiltableCard = memo(function TiltableCard({
       shadowBlur={shadowBlur}
       glareIntensity={glareIntensity}
       glareHue={glareHue}
+      glareMask={src}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img

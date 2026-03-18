@@ -2,7 +2,7 @@
   position: relative;
   width: 100%;
 
-  --card-radius: 12% / 10%;
+  --card-radius: 4%;
   --glitter: url("/textures/glitter.png");
   --glittersize: 25%;
 }
